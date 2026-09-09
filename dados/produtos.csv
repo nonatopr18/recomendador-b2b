@@ -1,0 +1,16 @@
+﻿produto_id,nome_produto,categoria,preco,margem,recorrente,ativo
+P001,ERP Essencial,Software,499.0,0.55,True,True
+P002,CRM Vendas,Software,349.0,0.62,True,True
+P003,Emissor Fiscal,Software,179.0,0.58,True,True
+P004,Gestão de Estoque,Software,289.0,0.6,True,True
+P005,Analytics Pro,Software,429.0,0.68,True,True
+P006,Backup Corporativo,Infraestrutura,239.0,0.57,True,True
+P007,Firewall Gerenciado,Segurança,599.0,0.48,True,True
+P008,Antivírus Empresarial,Segurança,149.0,0.51,True,True
+P009,Suporte Premium,Serviços,399.0,0.7,True,True
+P010,Treinamento da Equipe,Serviços,1800.0,0.45,False,True
+P011,Leitor de Código de Barras,Equipamentos,890.0,0.28,False,True
+P012,Impressora Térmica,Equipamentos,1250.0,0.25,False,True
+P013,Gateway de Pagamentos,Pagamentos,299.0,0.52,True,True
+P014,Link de Internet Backup,Infraestrutura,459.0,0.38,True,True
+P015,Assinatura Eletrônica,Produtividade,199.0,0.64,True,True
