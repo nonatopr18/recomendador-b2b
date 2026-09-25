@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import streamlit as st
+import unicodedata
 
 from recomendador import Configuracao, RecomendadorVendaCruzada, carregar_dados
 #### Gerar Senha
