@@ -2,6 +2,7 @@ from pathlib import Path
 
 import streamlit as st
 import unicodedata
+import hmac
 
 from recomendador import Configuracao, RecomendadorVendaCruzada, carregar_dados
 #### Gerar Senha
