@@ -3,7 +3,173 @@ from pathlib import Path
 import streamlit as st
 
 from recomendador import Configuracao, RecomendadorVendaCruzada, carregar_dados
+#### Gerar Senha
+# ============================================================
+# CONFIGURAÇÃO ÚNICA DO STREAMLIT
+# ============================================================
+st.set_page_config(
+    page_title="Classificação de Risco COVID",
+    page_icon="🩺",
+    layout="wide"
+)
+# ============================================================
+# LOGIN
+# ============================================================
+def carregar_usuarios():
 
+    try:
+        return st.secrets["usuarios"]
+
+    except Exception:
+        return None
+def normalizar_usuario(texto):
+    """Normaliza o usuário para aceitar João, joao, JOAO etc."""
+    texto = str(texto).strip().lower()
+    texto = unicodedata.normalize("NFD", texto)
+    return "".join(c for c in texto if unicodedata.category(c) != "Mn")
+
+def autenticar(usuario, senha):
+
+    usuarios = carregar_usuarios()
+
+    if usuarios is None:
+        return False, "Usuários ainda não configurados no Streamlit Secrets."
+
+    usuario_digitado = normalizar_usuario(usuario)
+    usuario_encontrado = None
+
+    # Procura o usuário sem diferenciar maiúsculas/minúsculas
+    # e sem diferenciar acentos.
+    for chave in usuarios:
+        if normalizar_usuario(chave) == usuario_digitado:
+            usuario_encontrado = chave
+            break
+
+    if usuario_encontrado is None:
+        return False, "Usuário ou senha inválidos."
+
+    try:
+        senha_correta = str(usuarios[usuario_encontrado]["senha"])
+    except Exception:
+        return False, "Configuração de senha inválida no Streamlit Secrets."
+
+    if hmac.compare_digest(str(senha), senha_correta):
+
+        nome = str(
+            usuarios[usuario_encontrado].get(
+                "nome",
+                usuario_encontrado
+            )
+        )
+
+        return True, nome
+
+    return False, "Usuário ou senha inválidos."
+# ============================================================
+# CONTROLE DA SESSÃO
+# ============================================================
+
+if "autenticado" not in st.session_state:
+    st.session_state.autenticado = False
+
+
+# ============================================================
+# TELA DE LOGIN
+# ============================================================
+
+if not st.session_state.autenticado:
+
+    st.title("🔐 Acesso ao sistema")
+
+    st.write(
+        "Digite seu usuário e sua senha para continuar."
+    )
+
+    usuario = st.text_input(
+        "Usuário",
+        placeholder="Digite seu usuário"
+    )
+
+    senha = st.text_input(
+        "Senha",
+        type="password",
+        placeholder="Digite sua senha"
+    )
+
+    if st.button(
+        "Entrar",
+        use_container_width=True,
+        type="primary"
+    ):
+
+        if not usuario or not senha:
+
+            st.warning(
+                "Informe o usuário e a senha."
+            )
+
+        else:
+
+            sucesso, resultado = autenticar(
+                usuario,
+                senha
+            )
+
+            if sucesso:
+
+                st.session_state.autenticado = True
+                st.session_state.usuario = usuario
+                st.session_state.nome_usuario = resultado
+
+                st.rerun()
+
+            else:
+
+                st.error(resultado)
+
+    # Impede que o restante do aplicativo apareça
+    st.stop()
+
+
+# ============================================================
+# USUÁRIO LOGADO
+# ============================================================
+
+nome_usuario = st.session_state.get(
+    "nome_usuario",
+    st.session_state.get("usuario", "")
+)
+
+
+# ============================================================
+# BOTÃO SAIR
+# ============================================================
+
+with st.sidebar:
+
+    st.success(
+        f"👤 Usuário: {nome_usuario}"
+    )
+
+    if st.button(
+        "🚪 Sair",
+        use_container_width=True
+    ):
+
+        st.session_state.autenticado = False
+
+        st.session_state.pop(
+            "usuario",
+            None
+        )
+
+        st.session_state.pop(
+            "nome_usuario",
+            None
+        )
+
+        st.rerun()
+### Senha Gerada
 
 BASE = Path(__file__).resolve().parent
 
